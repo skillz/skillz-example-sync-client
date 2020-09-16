@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: 27f6d4491128e4d589a8b5162a687ab0
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - tlsConfiguration: {fileID: 11400000, guid: 622003b01636c425a8f87d04abdb0105, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
