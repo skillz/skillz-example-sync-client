@@ -41,7 +41,7 @@ Technologies
 ### Setting up a new project
 
 Requirements to follow our setup:
-* Custom Flatbuffer compiler that simply extends our Message rather than Table to make use of opcodes (TODO: Need to link the git repo for this or include it in this repo)
+* Custom Flatbuffer compiler that simply extends our Message rather than Table to make use of opcodes (see the [server example repo](https://github.com/skillz/skillz-example-sync-server) for this file)
 * Intellij Idea IDE
 
 Running the project:
