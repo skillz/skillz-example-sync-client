@@ -87,11 +87,9 @@ public sealed class SyncConnectionController : MonoBehaviour
             return;
         }
     }
-
-#if UNITY_EDITOR
     public ServerConnectionInfo GetConnectionInfo() {
-        //UnityEngine.Random.Range(0, int.MaxValue)
-        int playerId = Application.isEditor ? 111111 : 222222;
+        long playerId = Application.isEditor ? 111111 : UserData.Instance.CurrentPlayerId;
+        playerId = playerId == 0 ? 222222 : playerId;
 
         UserData.Instance.SyncUrl = connectionArgs.Url;
         UserData.Instance.SyncPort = connectionArgs.Port;
@@ -107,16 +105,5 @@ public sealed class SyncConnectionController : MonoBehaviour
             UserData.Instance.CurrentPlayerId
         );
     }
-#else
-    public ServerConnectionInfo GetConnectionInfo() {
-        return new ServerConnectionInfo(
-            UserData.Instance.SyncUrl,
-            UserData.Instance.SyncPort,
-            UserData.Instance.SyncMatchId,
-            UserData.Instance.SyncMatchToken,
-            UserData.Instance.CurrentPlayerId
-        );
-    }
-#endif
 }
 

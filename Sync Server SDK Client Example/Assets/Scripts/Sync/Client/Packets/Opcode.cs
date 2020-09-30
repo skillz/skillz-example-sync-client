@@ -39,5 +39,7 @@
         GameState = 12,
 
         PlayerInput = 13,
+
+        Chat = 14,
     }
 }
