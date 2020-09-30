@@ -36,10 +36,10 @@
 
         MatchOver = 11,
 
-        GameState = 12,
+        Chat = 12,
 
         PlayerInput = 13,
 
-        Chat = 14,
+        GameState = 14,
     }
 }

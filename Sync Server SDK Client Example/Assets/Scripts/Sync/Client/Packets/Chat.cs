@@ -16,11 +16,11 @@ public struct Chat : IFlatbufferObject
   public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
   public Chat __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public short Opcode { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetShort(o + __p.bb_pos) : (short)14; } }
+  public short Opcode { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetShort(o + __p.bb_pos) : (short)12; } }
   public short ChatId { get { int o = __p.__offset(6); return o != 0 ? __p.bb.GetShort(o + __p.bb_pos) : (short)0; } }
 
   public static Offset<Chat> CreateChat(FlatBufferBuilder builder,
-      short opcode = 14,
+      short opcode = 12,
       short chatId = 0) {
     builder.StartTable(2);
     Chat.AddChatId(builder, chatId);
@@ -29,7 +29,7 @@ public struct Chat : IFlatbufferObject
   }
 
   public static void StartChat(FlatBufferBuilder builder) { builder.StartTable(2); }
-  public static void AddOpcode(FlatBufferBuilder builder, short opcode) { builder.AddShort(0, opcode, 14); }
+  public static void AddOpcode(FlatBufferBuilder builder, short opcode) { builder.AddShort(0, opcode, 12); }
   public static void AddChatId(FlatBufferBuilder builder, short chatId) { builder.AddShort(1, chatId, 0); }
   public static Offset<Chat> EndChat(FlatBufferBuilder builder) {
     int o = builder.EndTable();
