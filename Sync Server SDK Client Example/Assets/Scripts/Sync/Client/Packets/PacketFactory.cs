@@ -117,5 +117,21 @@ namespace Servers
 
             return builder.SizedByteArray();
         }
+      
+        public static byte[] MakeChatBuffer(int chatId)
+        {
+            var builder = new MessageBuilder();
+
+            Chat.StartChat(builder);
+
+            Chat.AddOpcode(builder, (sbyte)Opcode.Chat);
+            Chat.AddChatId(builder, (short) chatId);
+
+            var offset = Chat.EndChat(builder);
+
+            builder.Finish(offset.Value);
+
+            return builder.SizedByteArray();
+        }
     }
 }

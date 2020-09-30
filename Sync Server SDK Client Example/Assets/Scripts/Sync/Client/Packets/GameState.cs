@@ -16,14 +16,14 @@ public struct GameState : IFlatbufferObject
   public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
   public GameState __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public short Opcode { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetShort(o + __p.bb_pos) : (short)12; } }
+  public short Opcode { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetShort(o + __p.bb_pos) : (short)14; } }
   public int GameTickCount { get { int o = __p.__offset(6); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
   public int TickCount { get { int o = __p.__offset(8); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
   public int PlayerScore { get { int o = __p.__offset(10); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
   public int OpponentScore { get { int o = __p.__offset(12); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
 
   public static Offset<GameState> CreateGameState(FlatBufferBuilder builder,
-      short opcode = 12,
+      short opcode = 14,
       int gameTickCount = 0,
       int tickCount = 0,
       int playerScore = 0,
@@ -38,7 +38,7 @@ public struct GameState : IFlatbufferObject
   }
 
   public static void StartGameState(FlatBufferBuilder builder) { builder.StartTable(5); }
-  public static void AddOpcode(FlatBufferBuilder builder, short opcode) { builder.AddShort(0, opcode, 12); }
+  public static void AddOpcode(FlatBufferBuilder builder, short opcode) { builder.AddShort(0, opcode, 14); }
   public static void AddGameTickCount(FlatBufferBuilder builder, int gameTickCount) { builder.AddInt(1, gameTickCount, 0); }
   public static void AddTickCount(FlatBufferBuilder builder, int tickCount) { builder.AddInt(2, tickCount, 0); }
   public static void AddPlayerScore(FlatBufferBuilder builder, int playerScore) { builder.AddInt(3, playerScore, 0); }

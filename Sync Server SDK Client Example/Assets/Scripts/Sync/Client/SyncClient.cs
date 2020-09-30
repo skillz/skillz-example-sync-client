@@ -206,6 +206,23 @@ namespace Servers
             }
         }
 
+        public void SendChatMessage(int chatId)
+        {
+            if (!IsConnecting && IsConnected)
+            {
+                try
+                {
+                    SendCore(PacketFactory.MakeChatBuffer(chatId));
+
+                }
+                catch (Exception e)
+                {
+                    Debug.LogWarning("SendChatMessage exception, trying again: " + e.ToString());
+                    SendChatMessage(chatId);
+                }
+            }
+        }
+
         /// <summary>
         /// Sends a keep-alive message to the game server. This is non-blocking.
         /// </summary>
@@ -596,6 +613,26 @@ namespace Servers
             {
                 return true;
             }
+
+            Debug.Log("certificate.GetPublicKeyString()");
+            Debug.Log(certificate.GetPublicKeyString());
+            
+            Debug.Log("certificate.GetRawCertDataString()");
+            Debug.Log(certificate.GetRawCertDataString());
+            
+            Debug.Log("certificate.GetCertHashString()");
+            Debug.Log(certificate.GetCertHashString());
+            
+            Debug.Log("certificate.ToString(true)");
+            Debug.Log(certificate.ToString(true));
+
+            byte[] keyBytes = certificate.GetPublicKey();
+            string keyBytesStr = "";
+            foreach (byte keyByte in keyBytes) {
+                keyBytesStr += keyByte.ToString();
+            }
+            Debug.Log("key bytes");
+            Debug.Log(keyBytesStr);
 
             if (string.CompareOrdinal(certificate.GetPublicKeyString(), tlsConfiguration.PublicKey) == 0)
             {

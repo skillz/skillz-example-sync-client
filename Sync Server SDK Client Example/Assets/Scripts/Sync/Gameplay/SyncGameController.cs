@@ -157,6 +157,10 @@ public sealed class SyncGameController : MonoBehaviour
                     on(OpponentResumed.GetRootAsOpponentResumed(byteBuffer));
                     break;
 
+                case Opcode.Chat:
+                    on(Chat.GetRootAsChat(byteBuffer));
+                    break;
+
                 default:
                     Debug.Log("SyncGameController: Received packet with unimplemented/unsupported authcode: " + packet.Opcode);
                     break;
@@ -182,6 +186,12 @@ public sealed class SyncGameController : MonoBehaviour
         matchInfoDisplay.OpponentScore = message.OpponentScore;
         matchInfoDisplay.CurrentGameTick = message.GameTickCount;
         matchInfoDisplay.CurrentTick = message.TickCount;
+    }
+
+    private void on(Chat message)
+    {
+        Debug.Log("Chat message received!");
+        ChatManager.Instance.ShowPlayerChat(message.ChatId, false);
     }
 
     private void on(OpponentConnectionStatus message)
@@ -223,6 +233,8 @@ public sealed class SyncGameController : MonoBehaviour
 
         UserData.Instance.InPause = true;
         UserData.Instance.IsGameOver = true;
+
+        ChatManager.Instance.SetChatEnabled(false);
 
         matchInfoDisplay.PlayerScore = message.PlayerScore;
 
@@ -299,5 +311,9 @@ public sealed class SyncGameController : MonoBehaviour
     public void AbortOnNextUpdate()
     {
         doAbort = true;
+    }
+
+    public void SendChatForId(int chatId) {
+        client.SendChatMessage(chatId);
     }
 }
