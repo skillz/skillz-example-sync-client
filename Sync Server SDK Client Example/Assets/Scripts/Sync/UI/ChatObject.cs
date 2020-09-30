@@ -26,7 +26,6 @@ public class ChatObject : MonoBehaviour, IPointerDownHandler
 
     public void Show(Sprite chatSprite)
     {
-        // TODO: visual polish with animations
         chatImage.sprite = chatSprite;
         transform.localScale = new Vector3(0, 0, 1);
         gameObject.SetActive(true);

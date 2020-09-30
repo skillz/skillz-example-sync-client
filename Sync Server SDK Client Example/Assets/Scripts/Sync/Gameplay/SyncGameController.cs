@@ -158,7 +158,6 @@ public sealed class SyncGameController : MonoBehaviour
                     break;
 
                 case Opcode.Chat:
-                    Debug.Log("Chat receigedf");
                     on(Chat.GetRootAsChat(byteBuffer));
                     break;
 
