@@ -19,22 +19,30 @@ public struct MatchOver : IFlatbufferObject
   public short Opcode { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetShort(o + __p.bb_pos) : (short)11; } }
   public int PlayerScore { get { int o = __p.__offset(6); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
   public int OpponentScore { get { int o = __p.__offset(8); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
+  public long AbortingPlayer { get { int o = __p.__offset(10); return o != 0 ? __p.bb.GetLong(o + __p.bb_pos) : (long)0; } }
+  public long ForfeitingPlayer { get { int o = __p.__offset(12); return o != 0 ? __p.bb.GetLong(o + __p.bb_pos) : (long)0; } }
 
   public static Offset<MatchOver> CreateMatchOver(FlatBufferBuilder builder,
       short opcode = 11,
       int playerScore = 0,
-      int opponentScore = 0) {
-    builder.StartTable(3);
+      int opponentScore = 0,
+      long abortingPlayer = 0,
+      long forfeitingPlayer = 0) {
+    builder.StartTable(5);
+    MatchOver.AddForfeitingPlayer(builder, forfeitingPlayer);
+    MatchOver.AddAbortingPlayer(builder, abortingPlayer);
     MatchOver.AddOpponentScore(builder, opponentScore);
     MatchOver.AddPlayerScore(builder, playerScore);
     MatchOver.AddOpcode(builder, opcode);
     return MatchOver.EndMatchOver(builder);
   }
 
-  public static void StartMatchOver(FlatBufferBuilder builder) { builder.StartTable(3); }
+  public static void StartMatchOver(FlatBufferBuilder builder) { builder.StartTable(5); }
   public static void AddOpcode(FlatBufferBuilder builder, short opcode) { builder.AddShort(0, opcode, 11); }
   public static void AddPlayerScore(FlatBufferBuilder builder, int playerScore) { builder.AddInt(1, playerScore, 0); }
   public static void AddOpponentScore(FlatBufferBuilder builder, int opponentScore) { builder.AddInt(2, opponentScore, 0); }
+  public static void AddAbortingPlayer(FlatBufferBuilder builder, long abortingPlayer) { builder.AddLong(3, abortingPlayer, 0); }
+  public static void AddForfeitingPlayer(FlatBufferBuilder builder, long forfeitingPlayer) { builder.AddLong(4, forfeitingPlayer, 0); }
   public static Offset<MatchOver> EndMatchOver(FlatBufferBuilder builder) {
     int o = builder.EndTable();
     return new Offset<MatchOver>(o);

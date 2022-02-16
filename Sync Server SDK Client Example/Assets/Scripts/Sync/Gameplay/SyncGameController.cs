@@ -161,6 +161,9 @@ public sealed class SyncGameController : MonoBehaviour
                     on(Chat.GetRootAsChat(byteBuffer));
                     break;
 
+                case Opcode.KeepAlive:
+                    break;
+
                 default:
                     Debug.Log("SyncGameController: Received packet with unimplemented/unsupported authcode: " + packet.Opcode);
                     break;
@@ -229,7 +232,12 @@ public sealed class SyncGameController : MonoBehaviour
 
     private void on(MatchOver message)
     {
-        Debug.Log("SyncGameController: On MatchOver");
+        // if message.ForfeitingPlayer > 0, the match ended in a forfeit by that player
+        string forfeitingPlayerId = message.ForfeitingPlayer > 0 ? message.ForfeitingPlayer.ToString() : "none";
+        // if message.AbortingPlayer > 0, the match ended in an abort by that player
+        string abortingPlayerId   = message.AbortingPlayer > 0 ? message.AbortingPlayer.ToString() : "none";
+
+        Debug.Log("SyncGameController: On MatchOver, forfeiting player: " + forfeitingPlayerId + ", aborting player: " + abortingPlayerId);
 
         UserData.Instance.InPause = true;
         UserData.Instance.IsGameOver = true;
