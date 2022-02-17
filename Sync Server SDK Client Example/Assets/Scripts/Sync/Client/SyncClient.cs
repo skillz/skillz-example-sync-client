@@ -68,6 +68,11 @@ namespace Servers
         private int timeoutflag = 0;
         private ServerConnectionInfo connectArgs;
 
+        private SafeQueue<byte[]> outboundPacketsQueue = new SafeQueue<byte[]>();
+        private Timer writeTimer;
+        private int writeTimeoutflag = 0;
+        private volatile bool isWriting = false;
+
         public bool DidTimeOut = false;
         public bool SocketForceClosed = false;
 
@@ -125,6 +130,7 @@ namespace Servers
         public void ClearQueues()
         {
             receivePacketsQueue?.Clear();
+            outboundPacketsQueue?.Clear();
         }
 
         public void AttemptConnect(bool force = false)
@@ -151,7 +157,7 @@ namespace Servers
             }
             IsConnecting = true;
 
-            receivePacketsQueue.Clear();
+            ClearQueues();
             sslStream?.Close();
             client?.Close();
 
@@ -180,13 +186,14 @@ namespace Servers
             client?.Close();
 
             readTimer?.Dispose();
+            writeTimer?.Dispose();
 
             DidTimeOut = false;
             SocketForceClosed = false;
             UserData.Instance.IsGameOver = true;
             IsConnecting = false;
 
-            receivePacketsQueue?.Clear();
+            ClearQueues();
         }
 
         public void SendPlayerInput(int score)
@@ -466,12 +473,56 @@ namespace Servers
                 return;
             }
 
-            SendPacketAsync(data);
+            outboundPacketsQueue.Enqueue(data);
+            CheckSendMessages();
+        }
+
+        private void CheckSendMessages()
+        {
+            if (isWriting || outboundPacketsQueue.Count <= 0)
+            {
+                return;
+            }
+            SendPacketAsync();
         }
 
         private void OnSendMessage(IAsyncResult result)
         {
+            ResetWriteTimer();
             sslStream?.EndWrite(result);
+            isWriting = false;
+            CheckSendMessages();
+        }
+
+        private void OnWriteTimer(object obj)
+        {
+            int prevVal = Interlocked.CompareExchange(ref writeTimeoutflag, 2, 0);
+            if (prevVal != 0)// && UserData.Instance.IsGameStarted)
+            {
+                Debug.Log($"OnWriteTimer, flag was already set to {prevVal}, returning...");
+                return;
+            }
+            // if we get here, we've set the flag to 2, indicating a timeout was hit.
+            writeTimeoutflag = 0;
+            Debug.LogError("Write timeout occurred!!!");
+
+            isWriting = false;
+            CheckSendMessages();
+        }
+
+        public void ResetWriteTimer()
+        {
+            StopWriteTimer();
+            writeTimer = new Timer(OnWriteTimer, null, ReadTimeoutMs, Timeout.Infinite);
+        }
+
+        public void StopWriteTimer()
+        {
+            writeTimeoutflag = 0;
+            if (writeTimer != null)
+            {
+                writeTimer.Dispose();
+            }
         }
 
         public void StopReadTimer()
@@ -586,23 +637,31 @@ namespace Servers
             }
         }
 
-        private void SendPacketAsync(Byte[] packet)
+        private void SendPacketAsync()
         {
             try
             {
+                byte[] packet = { };
+                
+                if (!outboundPacketsQueue.TryDequeue(out packet))
+                {
+                    return;
+                }
+                ResetWriteTimer();
+                isWriting = true;
                 var state = new System.Object();
                 sslStream?.BeginWrite(packet, 0, packet.Length, OnSendMessage, state);
             }
             catch (SocketException exception)
             {
                 // Log as regular message because servers do shut down sometimes
-                Debug.Log($"SendPacketsBlocking: stream.Write SocketException error code; {exception.ErrorCode}, exception: {exception}");
+                Debug.LogError($"SendPacketAsync: stream.Write SocketException error code; {exception.ErrorCode}, exception: {exception}");
                 throw exception;
             }
             catch (Exception exception)
             {
                 // Log as regular message because servers do shut down sometimes
-                Debug.Log($"SendPacketsBlocking: stream.Write exception: {exception}");
+                Debug.LogError($"SendPacketAsync: stream.Write exception: {exception}");
                 throw exception;
             }
         }
